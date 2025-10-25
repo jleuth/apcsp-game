@@ -1,0 +1,44 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# PyInstaller 
+*.spec
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Pygame cache and generated assets
+*.bmp
+*.ogg
+*.wav
+*.blit
+
+.claude
+.kilocode
+__pycache__
+
+# Log files
+*.log
+
+# Python dotenv/environment config (optional)
+.env
