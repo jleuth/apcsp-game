@@ -1,5 +1,6 @@
 import pygame
 from animatronic import Animatronic
+from door import Door
 
 # Init window/meta-game stuff
 map = pygame.image.load('map.png')
@@ -10,6 +11,10 @@ gameStarted = False
 # Initialize waypoints and animatronic
 waypoints = [(100, 100), (700, 100), (700, 500), (100, 500)]
 anim = Animatronic(100, 100, waypoints)
+doors = [
+    Door(362, 542, 7, 33, "Left door"),
+    Door(448, 542, 7, 33, "Right door"),
+]
 
 # Initialize Pygame
 pygame.init()
@@ -25,12 +30,17 @@ while running:
         elif not gameStarted:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 gameStarted = True
+        elif gameStarted:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_d:
+                doors[1].toggle()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_a:
+                doors[0].toggle()
 
     # Clear screen
     screen.fill((0, 0, 0))
 
     if not gameStarted:  # Menu
-        # Simple menu with title and instructions
+        # menu with title and instructions
         font_title = pygame.font.SysFont(None, 64)
         font_instr = pygame.font.SysFont(None, 36)
         title_surf = font_title.render("FNAF Clone", True, (255,255,255)) # WORKING TITLE
@@ -44,6 +54,10 @@ while running:
         screen.blit(instr_surf, instr_rect)
     else:  # Gameplay
         screen.blit(map, (0,0))
+
+        for door in doors:
+            door.draw(screen)
+
 
     # Update display
     pygame.display.flip()
