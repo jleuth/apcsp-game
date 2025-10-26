@@ -11,4 +11,4 @@ class Door:
 
     def draw(self, surface):
         color = (255, 0, 0) if self.locked else (0, 0, 0)
-        pygame.draw.rect(surface, color, self.rect, )
+        pygame.draw.rect(surface, color, self.rect)

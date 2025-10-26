@@ -6,11 +6,11 @@ class Animatronic:
         self.x = x
         self.y = y
         self.waypoints = waypoints
-        self.current_waypoint = 0
+        self.currentWaypoint = 0
         self.speed = 1.5
 
     def moveToWaypoint(self):
-        tX, tY = self.waypoints[self.current_waypoint]
+        tX, tY = self.waypoints[self.currentWaypoint]
         dX = tX - self.x
         dY = tY - self.y
         distance = (dX**2 + dY**2)**0.5
@@ -19,7 +19,7 @@ class Animatronic:
             self.x += (dX / distance) * self.speed
             self.y += (dY / distance) * self.speed
         else:
-            self.current_waypoint = (self.current_waypoint + 1) % len(self.waypoints)
+            self.currentWaypoint = (self.currentWaypoint + 1) % len(self.waypoints)
 
     def draw(self, surface):
         pygame.draw.circle(surface, (255, 0, 0), (int(self.x), int(self.y)), 10)
