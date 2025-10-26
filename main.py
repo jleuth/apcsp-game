@@ -25,14 +25,16 @@ doors = [
     Door(448, 542, 7, 33, "Right door"),
 ]
 cameras = [
-    Camera(0, 0, 400, 300, "Top Left"),
-    Camera(400, 0, 400, 300, "Top Right"),
-    Camera(0, 300, 400, 300, "Bottom Left"),
-    Camera(400, 300, 400, 300, "Office"),
+    Camera(200, 7, 290, 285, "Atrium"),
+    Camera(487, 45, 100, 125, "Back Room 1"),
+    Camera(487, 170, 150, 152, "Back Room 2"),
+    Camera(239, 467, 100, 120, "Office Left"),
+    Camera(479, 467, 100, 120, "Office Right"),
+    Camera(479, 319, 100, 150, "Office Upper Right"),
+    Camera(239, 289, 100, 180, "Office Upper Left"),
 ]
 
 cameraMgr = CameraManager(cameras)
-
 def handleMenuInput(event):
     global gameState
     if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
@@ -44,10 +46,11 @@ def handleGameInput(event):
             doors[0].toggle()
         elif event.key == pygame.K_d:
             doors[1].toggle()
-        elif pygame.K_0 <= event.key <= pygame.K_9: #thanks Cursor
-            cameraMgr.switchCamera(event.key - pygame.K_0)
+        elif pygame.K_1 <= event.key <= pygame.K_9:
+            cameraMgr.switchCamera(event.key - pygame.K_1)
 
 def drawMenu():
+    global fontTitle, fontInstr
     fontTitle = pygame.font.SysFont(None, 64)
     fontInstr = pygame.font.SysFont(None, 36)
     title = fontTitle.render("FNAF Clone", True, (255, 255, 255))
@@ -64,6 +67,11 @@ def drawGame():
 
     if cameraMgr.isVisible(anim.x, anim.y):
         anim.draw(screen)
+
+    currentCam = fontInstr.render("Current camera:", True, (255, 255, 255))
+    camName = fontInstr.render(cameraMgr.activeCamera.name, True, (255, 255, 255))
+    screen.blit(currentCam, currentCam.get_rect(center = (100, 550)))
+    screen.blit(camName, camName.get_rect(center = (115, 580)))
 
     cameraMgr.drawDarkness(screen)
 
