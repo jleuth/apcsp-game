@@ -7,7 +7,7 @@ class Camera:
         self.active = False
 
     def isPointInCamera(self, x, y): # check if animatronic is in view of cam
-        return self.rect.collidepoint()
+        return self.rect.collidepoint(x, y)
 
     def drawOverlay(self, surface): #this hides inactive rooms
         if not self.active:
@@ -35,5 +35,5 @@ class CameraManager: #the word "camera" has lost all meaning to me
 
     def drawDarkness(self, surface):
         for c in self.cameras:
-            if not camera.active:
-                camera.draw_overlay(surface)
+            if not c.active:
+                c.drawOverlay(surface)

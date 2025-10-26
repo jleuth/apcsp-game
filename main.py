@@ -12,7 +12,7 @@ clock = pygame.time.Clock()
 gameStateMenu = 0
 gameStateGame = 1
 gameState = gameStateMenu
-cameraMgr = CameraManager(cameras)
+
 
 # Assets
 mapImage = pygame.image.load('map.png')
@@ -30,6 +30,8 @@ cameras = [
     Camera(0, 300, 400, 300, "Bottom Left"),
     Camera(400, 300, 400, 300, "Office"),
 ]
+
+cameraMgr = CameraManager(cameras)
 
 def handleMenuInput(event):
     global gameState
