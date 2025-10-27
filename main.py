@@ -1,4 +1,5 @@
 import pygame
+import random
 from animatronic import Animatronic
 from door import Door
 from camera import Camera, CameraManager
@@ -75,6 +76,16 @@ def drawGame():
 
     cameraMgr.drawDarkness(screen)
 
+def evalMvmtOpportunity():
+    check = anim.betweenTimeCounter()
+
+    if check == True: # hit mvmt opportunity, now roll dice to check if we succeed
+        roll = anim.rollDie(5) #hardcode for now
+    else:
+        pass
+
+    return roll
+
 # Main loop
 running = True
 while running:
@@ -89,6 +100,8 @@ while running:
     # Update
     if gameState == gameStateGame:
         anim.moveToWaypoint()
+    
+    evalMvmtOpportunity()
     
     # Draw
     screen.fill((0, 0, 0))
