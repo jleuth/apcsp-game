@@ -82,7 +82,7 @@ def evalMvmtOpportunity():
     if check == True: # hit mvmt opportunity, now roll dice to check if we succeed
         roll = anim.rollDie(5) #hardcode for now
     else:
-        pass
+        roll = False
 
     return roll
 
