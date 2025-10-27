@@ -39,7 +39,8 @@ class Animatronic:
     def betweenTimeCounter(self):
         if self.count == self.opportunity: # we hit a mvmt opportunity, reset count and opportunity
             self.count = 60
-            self.opportunity = random.randint(60, 300)
+            self.opportunity = random.randint(60, 600)
+            print(f'hit mvmt opportunity, new opportunity {self.opportunity}')
             return True
         else:
             self.count += 1
