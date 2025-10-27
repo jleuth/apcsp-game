@@ -12,7 +12,7 @@ class Camera:
     def drawOverlay(self, surface): #this hides inactive rooms
         if not self.active:
             darkness = pygame.Surface((self.rect.width, self.rect.height))
-            darkness.fill((255, 0, 0))
+            darkness.fill((0, 0, 0))
             surface.blit(darkness, self.rect)
 
 class CameraManager: #the word "camera" has lost all meaning to me
