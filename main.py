@@ -19,8 +19,16 @@ gameState = gameStateMenu
 mapImage = pygame.image.load('map.png')
 
 # Game objects
-waypoints = [(100, 100), (700, 100), (700, 500), (100, 500)]
-anim = Animatronic(100, 100, waypoints)
+waypointsFreddy = [(100, 100), (200, 100), (200, 200), (100, 200)]
+waypointsBonnie = [(700, 100), (700, 200), (600, 200), (600, 100)]
+waypointsChica = [(700, 500), (600, 500), (600, 400), (700, 400)]
+waypointsFoxy = [(100, 500), (200, 500), (200, 400), (100, 400)]
+animatronics = [
+    Animatronic(100, 100, waypointsFreddy),
+    Animatronic(200, 100, waypointsBonnie),
+    Animatronic(300, 100, waypointsChica),
+    Animatronic(400, 100, waypointsFoxy),
+]
 doors = [
     Door(362, 542, 7, 33, "Left door"),
     Door(448, 542, 7, 33, "Right door"),
@@ -62,12 +70,14 @@ def drawMenu():
 
 def drawGame():
     screen.blit(mapImage, (0, 0))
-    anim.draw(screen)
+    
     for door in doors:
         door.draw(screen)
 
-    if cameraMgr.isVisible(anim.x, anim.y):
+    for anim in animatronics:
         anim.draw(screen)
+        if cameraMgr.isVisible(anim.x, anim.y):
+            anim.draw(screen)
 
     currentCam = fontInstr.render("Current camera:", True, (255, 255, 255))
     camName = fontInstr.render(cameraMgr.activeCamera.name, True, (255, 255, 255))
@@ -76,7 +86,7 @@ def drawGame():
 
     cameraMgr.drawDarkness(screen)
 
-def evalMvmtOpportunity():
+def evalMvmtOpportunity(anim):
     check = anim.betweenTimeCounter()
 
     if check == True: # hit mvmt opportunity, now roll dice to check if we succeed
@@ -96,12 +106,9 @@ while running:
         elif gameState == gameStateGame:
             handleGameInput(event)
     
-    # Update
-    #if gameState == gameStateGame:
-        #anim.moveToWaypoint()
-    
-    if evalMvmtOpportunity():
-        anim.moveToWaypoint()
+    for anim in animatronics:
+        if evalMvmtOpportunity(anim):
+            anim.moveToWaypoint()
     
     # Draw
     screen.fill((0, 0, 0))
