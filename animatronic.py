@@ -2,9 +2,10 @@ import pygame
 import random
 
 class Animatronic:
-    def __init__(self, x, y, waypoints):
+    def __init__(self, x, y, waypoints, color):
         self.x = x
         self.y = y
+        self.color = color
         self.waypoints = waypoints
         self.currentWaypoint = 0
         self.speed = 1.5
@@ -19,7 +20,7 @@ class Animatronic:
     
 
     def draw(self, surface):
-        pygame.draw.circle(surface, (255, 0, 0), (int(self.x), int(self.y)), 10)
+        pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), 10)
 
     def rollDie(self, aiLevel):
         #d20 roll, if less than or equal to the ai level, we suceed a movement opportunity

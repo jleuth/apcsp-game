@@ -24,10 +24,10 @@ waypointsBonnie = [(700, 100), (700, 200), (600, 200), (600, 100)]
 waypointsChica = [(700, 500), (600, 500), (600, 400), (700, 400)]
 waypointsFoxy = [(100, 500), (200, 500), (200, 400), (100, 400)]
 animatronics = [
-    Animatronic(100, 100, waypointsFreddy),
-    Animatronic(200, 100, waypointsBonnie),
-    Animatronic(300, 100, waypointsChica),
-    Animatronic(400, 100, waypointsFoxy),
+    Animatronic(100, 100, waypointsFreddy, (139, 69, 19)),
+    Animatronic(200, 100, waypointsBonnie, (75, 0, 130)),
+    Animatronic(300, 100, waypointsChica, (255, 255, 0)),
+    Animatronic(400, 100, waypointsFoxy, (255, 0, 0)),
 ]
 doors = [
     Door(362, 542, 7, 33, "Left door"),
