@@ -106,9 +106,10 @@ while running:
         elif gameState == gameStateGame:
             handleGameInput(event)
     
-    for anim in animatronics:
-        if evalMvmtOpportunity(anim):
-            anim.moveToWaypoint()
+    if gameState == gameStateGame:
+        for anim in animatronics:
+            if evalMvmtOpportunity(anim):
+                anim.moveToWaypoint()
     
     # Draw
     screen.fill((0, 0, 0))
