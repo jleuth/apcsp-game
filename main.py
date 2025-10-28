@@ -111,15 +111,18 @@ while running:
             handleGameInput(event)
     
     if gameState == 1: #game
+        
         for anim in animatronics:
             if evalMvmtOpportunity(anim):
                 anim.moveToWaypoint()
 
         if gameConditions.hasWon() == False:
-            gameConditions.incrFrameCt()
+            gameConditions.incrFrameCt()         
+        # Every 30 seconds (1800 frames at 60fps), print in-game time
+            if gameConditions.currentFrame % 1800 == 0:
+                print("In-game time:", gameConditions.getFormattedTime())
         else:
-            # TODO: make the win screen
-            pass 
+            print('clock that tea')
     
     # Draw
     screen.fill((0, 0, 0))
