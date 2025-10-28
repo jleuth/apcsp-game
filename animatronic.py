@@ -13,7 +13,7 @@ class Animatronic:
 
 
     def moveToWaypoint(self):
-        self.currentWaypoint += 1
+        self.currentWaypoint = (self.currentWaypoint + 1) % len(self.waypoints)
         self.x, self.y = self.waypoints[self.currentWaypoint]
         print(f'moved to wp {self.currentWaypoint}')
     
