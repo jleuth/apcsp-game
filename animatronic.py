@@ -13,16 +13,7 @@ class Animatronic:
 
 
     def moveToWaypoint(self):
-        tX, tY = self.waypoints[self.currentWaypoint]
-        dX = tX - self.x
-        dY = tY - self.y
-        distance = (dX**2 + dY**2)**0.5
-
-        if distance > self.speed:
-            self.x += (dX / distance) * self.speed
-            self.y += (dY / distance) * self.speed
-        else:
-            self.currentWaypoint = (self.currentWaypoint + 1) % len(self.waypoints)
+        self.x, self.y = self.waypoints[self.currentWaypoint + 1]
 
     def draw(self, surface):
         pygame.draw.circle(surface, (255, 0, 0), (int(self.x), int(self.y)), 10)
@@ -32,8 +23,10 @@ class Animatronic:
         roll = random.randint(1, 20)
 
         if roll <= aiLevel:
+            print('succeeded')
             return True # succeeded mvmt opportunity
         else:
+            print('failed')
             return False
 
     def betweenTimeCounter(self):
