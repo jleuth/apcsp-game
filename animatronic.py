@@ -13,7 +13,10 @@ class Animatronic:
 
 
     def moveToWaypoint(self):
-        self.x, self.y = self.waypoints[self.currentWaypoint + 1]
+        self.currentWaypoint += 1
+        self.x, self.y = self.waypoints[self.currentWaypoint]
+        print(f'moved to wp {self.currentWaypoint}')
+    
 
     def draw(self, surface):
         pygame.draw.circle(surface, (255, 0, 0), (int(self.x), int(self.y)), 10)

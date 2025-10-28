@@ -81,10 +81,9 @@ def evalMvmtOpportunity():
 
     if check == True: # hit mvmt opportunity, now roll dice to check if we succeed
         roll = anim.rollDie(5) #hardcode for now
-    else:
-        roll = False
-
-    return roll
+        if roll:
+            return True
+    return False
 
 # Main loop
 running = True
@@ -98,10 +97,11 @@ while running:
             handleGameInput(event)
     
     # Update
-    if gameState == gameStateGame:
-        anim.moveToWaypoint()
+    #if gameState == gameStateGame:
+        #anim.moveToWaypoint()
     
-    evalMvmtOpportunity()
+    if evalMvmtOpportunity():
+        anim.moveToWaypoint()
     
     # Draw
     screen.fill((0, 0, 0))
