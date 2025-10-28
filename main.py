@@ -3,6 +3,7 @@ import random
 from animatronic import Animatronic
 from door import Door
 from camera import Camera, CameraManager
+from conditions import GameConditions
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
@@ -15,7 +16,7 @@ clock = pygame.time.Clock()
 #Lose screen = 2
 #Win screen = 3
 gameState = 0
-
+gameConditions = GameConditions()
 
 # Assets
 mapImage = pygame.image.load('map.png')
@@ -113,6 +114,12 @@ while running:
         for anim in animatronics:
             if evalMvmtOpportunity(anim):
                 anim.moveToWaypoint()
+
+        if gameConditions.hasWon() == False:
+            gameConditions.incrFrameCt()
+        else:
+            # TODO: make the win screen
+            pass 
     
     # Draw
     screen.fill((0, 0, 0))
