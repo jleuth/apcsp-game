@@ -10,9 +10,11 @@ pygame.display.set_caption("FNAF Horror")
 clock = pygame.time.Clock()
 
 # Game state
-gameStateMenu = 0
-gameStateGame = 1
-gameState = gameStateMenu
+#Menu = 0
+#In game = 1
+#Lose screen = 2
+#Win screen = 3
+gameState = 0
 
 
 # Assets
@@ -48,7 +50,7 @@ cameraMgr = CameraManager(cameras)
 def handleMenuInput(event):
     global gameState
     if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-        gameState = gameStateGame
+        gameState = 1 # now in game
 
 def handleGameInput(event):
     if event.type == pygame.KEYDOWN:
@@ -102,21 +104,21 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif gameState == gameStateMenu:
+        elif gameState == 0: #menu
             handleMenuInput(event)
-        elif gameState == gameStateGame:
+        elif gameState == 1: #game
             handleGameInput(event)
     
-    if gameState == gameStateGame:
+    if gameState == 1: #game
         for anim in animatronics:
             if evalMvmtOpportunity(anim):
                 anim.moveToWaypoint()
     
     # Draw
     screen.fill((0, 0, 0))
-    if gameState == gameStateMenu:
+    if gameState == 0:
         drawMenu()
-    elif gameState == gameStateGame:
+    elif gameState == 1:
         drawGame()
     
     pygame.display.flip()
