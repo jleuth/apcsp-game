@@ -16,7 +16,7 @@ class Animatronic:
     def moveToWaypoint(self):
         self.currentWaypoint = (self.currentWaypoint + 1) % len(self.waypoints)
         self.x, self.y = self.waypoints[self.currentWaypoint]
-        print(f'moved to wp {self.currentWaypoint}')
+        #print(f'moved to wp {self.currentWaypoint}')
     
 
     def draw(self, surface):
@@ -27,17 +27,17 @@ class Animatronic:
         roll = random.randint(1, 20)
 
         if roll <= aiLevel:
-            print('succeeded')
+            #print('succeeded')
             return True # succeeded mvmt opportunity
         else:
-            print('failed')
+            #print('failed')
             return False
 
     def betweenTimeCounter(self):
         if self.count == self.opportunity: # we hit a mvmt opportunity, reset count and opportunity
             self.count = 60
             self.opportunity = random.randint(60, 600)
-            print(f'hit mvmt opportunity, new opportunity {self.opportunity}')
+            #print(f'hit mvmt opportunity, new opportunity {self.opportunity}')
             return True
         else:
             self.count += 1
