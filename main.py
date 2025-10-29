@@ -6,7 +6,7 @@ from camera import Camera, CameraManager
 from conditions import GameConditions
 
 pygame.init()
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((900, 600))
 pygame.display.set_caption("FNAF Horror")
 clock = pygame.time.Clock()
 
@@ -20,31 +20,32 @@ gameConditions = GameConditions()
 
 # Assets
 mapImage = pygame.image.load('map.png')
+mapImageCropped = mapImage.subsurface(pygame.Rect(200, 0, mapImage.get_width() - 200, mapImage.get_height())) #move to the left
 
-# Game objects
-waypointsFreddy = [(100, 100), (200, 100), (200, 200), (100, 200)]
-waypointsBonnie = [(700, 100), (700, 200), (600, 200), (600, 100)]
-waypointsChica = [(700, 500), (600, 500), (600, 400), (700, 400)]
-waypointsFoxy = [(100, 500), (200, 500), (200, 400), (100, 400)]
+# Game objects 
+waypointsFreddy = [(-40, 100), (60, 100), (60, 200), (-40, 200)]
+waypointsBonnie = [(560, 100), (560, 200), (460, 200), (460, 100)]
+waypointsChica = [(560, 500), (460, 500), (460, 400), (560, 400)]
+waypointsFoxy = [(-40, 500), (60, 500), (60, 400), (-40, 400)]
 animatronics = [
-    Animatronic(100, 100, waypointsFreddy, (139, 69, 19)),
-    Animatronic(200, 100, waypointsBonnie, (75, 0, 130)),
-    Animatronic(300, 100, waypointsChica, (255, 255, 0)),
-    Animatronic(400, 100, waypointsFoxy, (255, 0, 0)),
+    Animatronic(-40, 100, waypointsFreddy, (139, 69, 19)),
+    Animatronic(60, 100, waypointsBonnie, (75, 0, 130)),
+    Animatronic(160, 100, waypointsChica, (255, 255, 0)),
+    Animatronic(260, 100, waypointsFoxy, (255, 0, 0)),
 ]
 doors = [
-    Door(362, 542, 7, 33, "Left door"),
-    Door(448, 542, 7, 33, "Right door"),
+    Door(222, 542, 7, 33, "Left door"),
+    Door(308, 542, 7, 33, "Right door"),
 ]
 cameras = [
     #todo: make the office its own camera rather than showing all the time (maybe? undecided)
-    Camera(200, 7, 290, 285, "Atrium"),
-    Camera(487, 45, 100, 125, "Back Room 1"),
-    Camera(487, 170, 150, 152, "Back Room 2"),
-    Camera(239, 467, 100, 120, "Office Left"),
-    Camera(479, 467, 100, 120, "Office Right"),
-    Camera(479, 319, 100, 150, "Office Upper Right"),
-    Camera(239, 289, 100, 180, "Office Upper Left"),
+    Camera(60, 7, 290, 285, "Atrium"),
+    Camera(347, 45, 100, 125, "Back Room 1"),
+    Camera(347, 170, 150, 152, "Back Room 2"),
+    Camera(99, 467, 100, 120, "Office Left"),
+    Camera(339, 467, 100, 120, "Office Right"),
+    Camera(339, 319, 100, 150, "Office Upper Right"),
+    Camera(99, 289, 100, 180, "Office Upper Left"),
 ]
 
 cameraMgr = CameraManager(cameras)
@@ -69,11 +70,13 @@ def drawMenu():
     title = fontTitle.render("FNAF Clone", True, (255, 255, 255))
     instr = fontInstr.render("Press ENTER to Start", True, (255, 255, 255))
     
-    screen.blit(title, title.get_rect(center=(400, 200)))
-    screen.blit(instr, instr.get_rect(center=(400, 300)))
+    screen.blit(title, title.get_rect(center=(450, 200)))
+    screen.blit(instr, instr.get_rect(center=(450, 300)))
 
 def drawGame():
-    screen.blit(mapImage, (0, 0))
+    screen.blit(mapImageCropped, (60, 0))
+
+    pygame.draw.rect(screen, (100, 100, 100), (500, 0, 5, 600)) # divider
     
     for door in doors:
         door.draw(screen)
@@ -83,10 +86,8 @@ def drawGame():
         if cameraMgr.isVisible(anim.x, anim.y):
             anim.draw(screen)
 
-    currentCam = fontInstr.render("Current camera:", True, (255, 255, 255))
-    camName = fontInstr.render(cameraMgr.activeCamera.name, True, (255, 255, 255))
-    screen.blit(currentCam, currentCam.get_rect(center = (100, 550)))
-    screen.blit(camName, camName.get_rect(center = (115, 580)))
+    camText = fontInstr.render(cameraMgr.activeCamera.name, True, (255, 255, 255))
+    screen.blit(camText, camText.get_rect(topright = (880, 10)))
 
     cameraMgr.drawDarkness(screen)
 
