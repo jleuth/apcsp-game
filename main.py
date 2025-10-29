@@ -89,6 +89,10 @@ def drawGame():
     camText = fontInstr.render(cameraMgr.activeCamera.name, True, (255, 255, 255))
     screen.blit(camText, camText.get_rect(topright = (880, 10)))
 
+    # add time display
+    timeText = fontInstr.render(gameConditions.getFormattedTime(), True, (255, 255, 255))
+    screen.blit(timeText, timeText.get_rect(topleft = (520, 10)))
+
     cameraMgr.drawDarkness(screen)
 
 def evalMvmtOpportunity(anim):
