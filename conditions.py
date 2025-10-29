@@ -40,6 +40,7 @@ class GameConditions:
 class Controls:
     def __init__(self, cameras):
         self.buttons = []
+        self.door_buttons = []
         self.font = pygame.font.SysFont(None, 20)
 
         # Create a button for each camera
@@ -48,6 +49,11 @@ class Controls:
         button_x = 515
         button_y = 50
         spacing = 5
+        door_button_width = 180
+        door_button_height = 50
+        door_button_y = button_y + 10
+        door_button_x1 = 515
+        door_button_x2 = 515 + door_button_width + 5
 
         for i, camera in enumerate(cameras):
             button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
@@ -57,6 +63,17 @@ class Controls:
                 'name': camera.name
             })
             button_y += button_height + spacing
+
+        self.door_buttons.append({
+            'rect': pygame.Rect(door_button_x1, door_button_y, door_button_width, door_button_height),
+            'door_index': 0,
+            'name': 'Left Door'
+        })
+        self.door_buttons.append({
+            'rect': pygame.Rect(door_button_x2, door_button_y, door_button_width, door_button_height),
+            'door_index': 1,
+            'name': 'Right Door'
+        })
 
     def draw(self, surface):
         for button in self.buttons:
@@ -69,8 +86,24 @@ class Controls:
             text_rect = text.get_rect(center=button['rect'].center)
             surface.blit(text, text_rect)
 
+        for button in self.door_buttons:
+            # Draw button background
+            pygame.draw.rect(surface, (120, 60, 60), button['rect'])
+            # Draw button border
+            pygame.draw.rect(surface, (180, 100, 100), button['rect'], 2)
+            # Draw text
+            text = self.font.render(button['name'], True, (255, 255, 255))
+            text_rect = text.get_rect(center=button['rect'].center)
+            surface.blit(text, text_rect)
+
     def getClickedCamera(self, mouse_pos):
         for button in self.buttons:
             if button['rect'].collidepoint(mouse_pos):
                 return button['camera_index']
+        return None
+
+    def getClickedDoor(self, mouse_pos):
+        for button in self.door_buttons:
+            if button['rect'].collidepoint(mouse_pos):
+                return button['door_index']
         return None

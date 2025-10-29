@@ -65,6 +65,9 @@ def handleGameInput(event):
         camera_index = controls.getClickedCamera(event.pos)
         if camera_index is not None:
             cameraMgr.switchCamera(camera_index)
+        door_index = controls.getClickedDoor(event.pos)
+        if door_index is not None:
+            doors[door_index].toggle()
 
 def drawMenu():
     global fontTitle, fontInstr
