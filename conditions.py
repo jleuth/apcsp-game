@@ -68,3 +68,9 @@ class Controls:
             text = self.font.render(button['name'], True, (255, 255, 255))
             text_rect = text.get_rect(center=button['rect'].center)
             surface.blit(text, text_rect)
+
+    def getClickedCamera(self, mouse_pos):
+        for button in self.buttons:
+            if button['rect'].collidepoint(mouse_pos):
+                return button['camera_index']
+        return None
