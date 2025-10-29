@@ -36,4 +36,35 @@ class GameConditions:
             display_hour -= 12
         
         return f"{display_hour}:{minutes_elapsed:02d} AM"
-        
+
+class Controls:
+    def __init__(self, cameras):
+        self.buttons = []
+        self.font = pygame.font.SysFont(None, 20)
+
+        # Create a button for each camera
+        button_width = 370
+        button_height = 50
+        button_x = 515
+        button_y = 50
+        spacing = 5
+
+        for i, camera in enumerate(cameras):
+            button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+            self.buttons.append({
+                'rect': button_rect,
+                'camera_index': i,
+                'name': camera.name
+            })
+            button_y += button_height + spacing
+
+    def draw(self, surface):
+        for button in self.buttons:
+            # Draw button background
+            pygame.draw.rect(surface, (60, 60, 90), button['rect'])
+            # Draw button border
+            pygame.draw.rect(surface, (100, 100, 150), button['rect'], 2)
+            # Draw text
+            text = self.font.render(button['name'], True, (255, 255, 255))
+            text_rect = text.get_rect(center=button['rect'].center)
+            surface.blit(text, text_rect)

@@ -3,7 +3,7 @@ import random
 from animatronic import Animatronic
 from door import Door
 from camera import Camera, CameraManager
-from conditions import GameConditions
+from conditions import GameConditions, Controls
 
 pygame.init()
 screen = pygame.display.set_mode((900, 600))
@@ -49,6 +49,7 @@ cameras = [
 ]
 
 cameraMgr = CameraManager(cameras)
+controls = Controls(cameras)
 def handleMenuInput(event):
     global gameState
     if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
@@ -94,6 +95,7 @@ def drawGame():
     screen.blit(timeText, timeText.get_rect(topleft = (520, 10)))
 
     cameraMgr.drawDarkness(screen)
+    controls.draw(screen)
 
 def evalMvmtOpportunity(anim):
     check = anim.betweenTimeCounter()
