@@ -56,12 +56,7 @@ def handleMenuInput(event):
         gameState = 1 # now in game
 
 def handleGameInput(event):
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_a:
-            doors[0].toggle()
-        elif event.key == pygame.K_d:
-            doors[1].toggle()
-    elif event.type == pygame.MOUSEBUTTONDOWN:
+    if event.type == pygame.MOUSEBUTTONDOWN:
         camera_index = controls.getClickedCamera(event.pos)
         if camera_index is not None:
             cameraMgr.switchCamera(camera_index)

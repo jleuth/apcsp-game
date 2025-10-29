@@ -49,11 +49,6 @@ class Controls:
         button_x = 515
         button_y = 50
         spacing = 5
-        door_button_width = 180
-        door_button_height = 50
-        door_button_y = button_y + 10
-        door_button_x1 = 515
-        door_button_x2 = 515 + door_button_width + 5
 
         for i, camera in enumerate(cameras):
             button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
@@ -63,6 +58,12 @@ class Controls:
                 'name': camera.name
             })
             button_y += button_height + spacing
+
+        door_button_width = 180
+        door_button_height = 50
+        door_button_y = button_y + 10
+        door_button_x1 = 515
+        door_button_x2 = 515 + door_button_width + 5
 
         self.door_buttons.append({
             'rect': pygame.Rect(door_button_x1, door_button_y, door_button_width, door_button_height),
