@@ -4,6 +4,7 @@ from animatronic import Animatronic
 from door import Door
 from camera import Camera, CameraManager
 from conditions import GameConditions, Controls
+from power import Power
 
 pygame.init()
 screen = pygame.display.set_mode((900, 600))
@@ -17,6 +18,7 @@ clock = pygame.time.Clock()
 #Win screen = 3
 gameState = 0
 gameConditions = GameConditions()
+power = Power()
 
 # Assets
 mapImage = pygame.image.load('map.png')
@@ -63,6 +65,10 @@ def handleGameInput(event):
         door_index = controls.getClickedDoor(event.pos)
         if door_index is not None:
             doors[door_index].toggle()
+            if door_index == 0:
+                power.isLeftDoorInUse = doors[0].locked
+            elif door_index == 1:
+                power.isRightDoorInUse = doors[1].locked
 
 def drawMenu():
     global fontTitle, fontInstr
@@ -93,6 +99,10 @@ def drawGame():
     # add time display
     timeText = fontInstr.render(gameConditions.getFormattedTime(), True, (255, 255, 255))
     screen.blit(timeText, timeText.get_rect(topleft = (520, 10)))
+
+    # add power display
+    powerText = fontInstr.render(f"{power.currentPower:.1f}%", True, (255, 255, 255))
+    screen.blit(powerText, powerText.get_rect(topleft = (520, 500)))
 
     cameraMgr.drawDarkness(screen)
     controls.draw(screen)
