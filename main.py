@@ -5,6 +5,7 @@ from door import Door
 from camera import Camera, CameraManager
 from conditions import GameConditions, Controls
 from power import Power
+from ai import Eleven, OpenRouter
 
 pygame.init()
 screen = pygame.display.set_mode((900, 600))
@@ -19,6 +20,8 @@ clock = pygame.time.Clock()
 gameState = 0
 gameConditions = GameConditions()
 power = Power()
+eleven = Eleven()
+openrouter = OpenRouter()
 
 # Assets
 mapImage = pygame.image.load('map.png')
@@ -134,6 +137,10 @@ def evalMvmtOpportunity(anim):
         if roll:
             return True
     return False
+
+def callAI(voiceID): #voice id will be like eleven.bonnieVoice no parenthesis
+    line = openrouter.generateLines()
+    eleven.generateSpeech(line, voiceID)
 
 # Main loop
 running = True
