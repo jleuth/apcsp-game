@@ -40,7 +40,8 @@ doors = [
     Door(308, 542, 7, 33, "Right door"),
 ]
 cameras = [
-    #todo: make the office its own camera rather than showing all the time (maybe? undecided)
+    
+    Camera(195, 438, 145, 148, "Office"),
     Camera(60, 7, 290, 285, "Atrium"),
     Camera(347, 45, 100, 125, "Back Room 1"),
     Camera(347, 170, 150, 152, "Back Room 2"),
