@@ -10,7 +10,7 @@ class Animatronic:
         self.currentWaypoint = 0
         self.speed = 1.5
         self.count = 60 #start at 60, assuming 60fps
-        self.opportunity = random.randint(60, 300) # a mvmt opportunity can be ANY FRAME between 1-5 seconds
+        self.opportunity = random.randint(180, 420) # a mvmt opportunity can be ANY FRAME between 3-7 seconds at 60fps
 
 
     def moveToWaypoint(self):
