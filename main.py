@@ -128,6 +128,8 @@ while running:
             handleGameInput(event)
     
     if gameState == 1: #game
+        if gameConditions.currentFrame % 60 == 0:
+            power.losePower()
         
         for anim in animatronics:
             if evalMvmtOpportunity(anim):
