@@ -61,8 +61,15 @@ def handleMenuInput(event):
 def handleGameInput(event):
     if event.type == pygame.MOUSEBUTTONDOWN:
         camera_index = controls.getClickedCamera(event.pos)
+
         if camera_index is not None:
             cameraMgr.switchCamera(camera_index)
+            if cameraMgr.activeCamera.name == 'Office':
+                power.isCamInUse = False
+                print('cam not in use')
+            else:
+                power.isCamInUse = True
+                print('cam in use')
         door_index = controls.getClickedDoor(event.pos)
         if door_index is not None:
             doors[door_index].toggle()
