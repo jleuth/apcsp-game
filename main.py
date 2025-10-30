@@ -25,10 +25,22 @@ mapImage = pygame.image.load('map.png')
 mapImageCropped = mapImage.subsurface(pygame.Rect(200, 0, mapImage.get_width() - 200, mapImage.get_height())) #move to the left
 
 # Game objects 
-waypointsFreddy = [(-40, 100), (60, 100), (60, 200), (-40, 200)]
-waypointsBonnie = [(560, 100), (560, 200), (460, 200), (460, 100)]
-waypointsChica = [(560, 500), (460, 500), (460, 400), (560, 400)]
-waypointsFoxy = [(-40, 500), (60, 500), (60, 400), (-40, 400)]
+
+waypointsFreddy = [
+    (222, 120), (400, 121), (451, 235), (139, 142), (191, 349), (148, 513), (287, 544)
+]
+
+waypointsFoxy = [
+    (320, 91), (425, 76), (437, 244), (381, 379), (382, 509), (287, 544)
+]
+
+waypointsBonnie = [
+    (298, 183), (403, 142), (428, 273), (387, 385), (434, 564), (287, 544)
+]
+
+waypointsChica = [
+    (233, 204), (209, 241), (194, 383), (163, 515), (287, 544)
+]
 animatronics = [
     Animatronic(-40, 100, waypointsFreddy, (139, 69, 19)),
     Animatronic(60, 100, waypointsBonnie, (75, 0, 130)),
@@ -141,6 +153,9 @@ while running:
         for anim in animatronics:
             if evalMvmtOpportunity(anim):
                 anim.moveToWaypoint()
+
+            if anim.x == 407 and anim.y == 544: #this checks if any animatronic has hit the waypoint that is in the office
+                print("LOSER")
 
         if gameConditions.hasWon() == False:
             gameConditions.incrFrameCt()         
