@@ -73,10 +73,9 @@ def handleGameInput(event):
         door_index = controls.getClickedDoor(event.pos)
         if door_index is not None:
             doors[door_index].toggle()
-            if door_index == 0:
-                power.isLeftDoorInUse = doors[0].locked
-            elif door_index == 1:
-                power.isRightDoorInUse = doors[1].locked
+            # update states according to door lock status
+            power.isLeftDoorInUse = doors[0].locked
+            power.isRightDoorInUse = doors[1].locked
 
 def drawMenu():
     global fontTitle, fontInstr
