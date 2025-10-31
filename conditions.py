@@ -108,3 +108,11 @@ class Controls:
             if button['rect'].collidepoint(mouse_pos):
                 return button['door_index']
         return None
+
+class AiConditions:
+    def __init__(self):
+        self.isSpeaking = False
+        self.bonnieSpoken = 0
+        self.freddySpoken = 0
+        self.chicaSpoken = 0
+        self.foxySpoken = 0

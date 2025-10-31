@@ -4,7 +4,7 @@ import threading
 from animatronic import Animatronic
 from door import Door
 from camera import Camera, CameraManager
-from conditions import GameConditions, Controls
+from conditions import GameConditions, Controls, AiConditions
 from power import Power
 from ai import Eleven, OpenRouter
 
@@ -26,7 +26,7 @@ openrouter = OpenRouter()
 
 # Voice line tracking
 last_voice_frame = 0
-voice_cooldown = 600
+voice_cooldown = random.randint(600, 1200)
 battery_warning_given = False
 
 # Assets
@@ -142,10 +142,22 @@ def evalMvmtOpportunity(anim):
         if roll:
             return True
     return False
-
-def callAI(voiceID): #voice id will be like eleven.bonnieVoice no parenthesis
-    line = openrouter.generateLines()
-    eleven.generateSpeech(line, voiceID)
+def callAI(voiceID): # voice id will be like eleven.bonnieVoice no parenthesis
+    if gameConditions.AiCondition.freddySpoken > 2 and voiceID == 'eleven.freddyVoice':
+        return
+    elif gameConditions.AiCondition.bonnieSpoken > 2 and voiceID == 'eleven.bonnieVoice':
+        return
+    elif gameConditions.AiCondition.chicaSpoken > 2 and voiceID == 'eleven.chicaVoice':
+        return
+    elif gameConditions.AiCondition.foxySpoken > 2 and voiceID == 'eleven.foxyVoice':
+        return
+    elif gameConditions.AiCondition.isSpeaking == True:
+        return
+    else:
+        gameConditions.AiCondition.isSpeaking = True
+        line = openrouter.generateLines()
+        eleven.generateSpeech(line, voiceID)
+        gameConditions.AiCondition.isSpeaking = False
 
 def lowBatteryVoice():
     line = openrouter.generateVoiceLine("Freddy", "power_warning", f"power at {int(power.currentPower)}%")
