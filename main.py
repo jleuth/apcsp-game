@@ -1,5 +1,6 @@
 import pygame
 import random
+import threading
 from animatronic import Animatronic
 from door import Door
 from camera import Camera, CameraManager
@@ -22,6 +23,11 @@ gameConditions = GameConditions()
 power = Power()
 eleven = Eleven()
 openrouter = OpenRouter()
+
+# Voice line tracking
+last_voice_frame = 0
+voice_cooldown = 300
+battery_warning_given = False
 
 # Assets
 mapImage = pygame.image.load('map.png')
@@ -142,6 +148,17 @@ def callAI(voiceID): #voice id will be like eleven.bonnieVoice no parenthesis
     line = openrouter.generateLines()
     eleven.generateSpeech(line, voiceID)
 
+def lowBatteryVoice():
+    line = openrouter.generateVoiceLine("Freddy", "power_warning", f"power at {int(power.currentPower)}%")
+    eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
+    
+def outOfBatteryVoice():
+    line = openrouter.generateVoiceLine("Bonnie", "power_warning", "no power left")
+    eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
+
+def closeAnimatronicVoice():
+    line = openrouter.generateVoiceLine(anim_name, "movement", f"distance {int(distance_to_office)}")
+    eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")    
 # Main loop
 running = True
 while running:
@@ -156,10 +173,36 @@ while running:
     if gameState == 1: #game
         if gameConditions.currentFrame % 60 == 0:
             power.losePower()
-        
+
+            # Voice line for low battery
+            if power.currentPower < 25 and power.currentPower > 0 and not battery_warning_given and gameConditions.currentFrame - last_voice_frame > voice_cooldown:
+
+                threading.Thread(target=lowBatteryVoice, daemon=True).start()
+                last_voice_frame = gameConditions.currentFrame
+                voice_cooldown = random.randint(180, 600)
+                battery_warning_given = True
+
+            # Voice line for out of battery
+            if power.currentPower <= 0 and gameConditions.currentFrame - last_voice_frame > voice_cooldown:
+                threading.Thread(target=outOfBatteryVoice, daemon=True).start()
+                last_voice_frame = gameConditions.currentFrame
+                voice_cooldown = random.randint(300, 900)
+
+            # Reset battery warning when power recovers
+            if power.currentPower >= 50:
+                battery_warning_given = False
+
         for anim in animatronics:
             if evalMvmtOpportunity(anim):
                 anim.moveToWaypoint()
+
+            # Voice line when animatronic gets close to office
+            distance_to_office = ((anim.x - 287)**2 + (anim.y - 544)**2)**0.5
+            if distance_to_office < 200 and gameConditions.currentFrame - last_voice_frame > voice_cooldown:
+                anim_name = ["Freddy", "Bonnie", "Chica", "Foxy"][animatronics.index(anim)]
+                threading.Thread(target=closeAnimatronicVoice, daemon=True).start()
+                last_voice_frame = gameConditions.currentFrame
+                voice_cooldown = random.randint(180, 600)
 
             if anim.x == 407 and anim.y == 544: #this checks if any animatronic has hit the waypoint that is in the office
                 print("LOSER")
