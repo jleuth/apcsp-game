@@ -124,7 +124,7 @@ def drawGame():
 
     # add power display
     powerText = fontInstr.render(f"{power.currentPower:.1f}%", True, (255, 255, 255))
-    screen.blit(powerText, powerText.get_rect(topleft = (520, 500)))
+    screen.blit(powerText, powerText.get_rect(topleft = (675, 10)))
 
     cameraMgr.drawDarkness(screen)
     controls.draw(screen)
