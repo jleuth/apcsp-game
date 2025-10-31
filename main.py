@@ -215,7 +215,7 @@ while running:
                 last_voice_frame = gameConditions.currentFrame
                 voice_cooldown = random.randint(180, 600)
 
-            if anim.x == 407 and anim.y == 544: #this checks if any animatronic has hit the waypoint that is in the office
+            if anim.x == 287 and anim.y == 544: #this checks if any animatronic has hit the waypoint that is in the office
                 print("LOSER")
 
         if gameConditions.hasWon() == False:
