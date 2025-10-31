@@ -26,7 +26,7 @@ openrouter = OpenRouter()
 
 # Voice line tracking
 last_voice_frame = 0
-voice_cooldown = 300
+voice_cooldown = 600
 battery_warning_given = False
 
 # Assets
@@ -137,7 +137,6 @@ def drawGame():
 
 def evalMvmtOpportunity(anim):
     check = anim.betweenTimeCounter()
-
     if check == True: # hit mvmt opportunity, now roll dice to check if we succeed
         roll = anim.rollDie(5) #hardcode for now
         if roll:
