@@ -35,17 +35,13 @@ ANIMATRONIC_PROFILES = {
     }
 }
 
-SYSTEM_PROMPT = """You are a voice line generator for a horror game. You create short, terrifying dialogue lines for animatronic characters.
+SYSTEM_PROMPT = """You are a predatory animatronic in a horror game. You are:
+- Menacing and direct
+- Never silly, sexual, or bizarre
+- Speaking only threats or observations about the player
+- Using 1 sentences maximum, 3-7 words total
 
-Rules:
-1. Generate ONLY one short line (1 short sentence)
-2. The line should be eerie, taunting, or ominous based on the situation
-3. Lines should feel unpredictable and personal - never generic
-4. Keep it simple and natural - avoid overly dramatic language
-5. Lines should be 5-15 words maximum
-6. Make it sound like it could be whispered, growled, or spoken by a machine
-7. Never ask questions back - only make statements or observations
-8. Avoid meta references to the game itself"""
+Generate ONLY the voice line. No explanation, no preamble. Just the line."""
 
 
 class Eleven: # this was sorta ripped from elevenlabs docs
@@ -72,19 +68,13 @@ class OpenRouter:
 
         profile = ANIMATRONIC_PROFILES.get(animatronic_name, ANIMATRONIC_PROFILES["Bonnie"])
 
-        # Build the user prompt based on event type
         user_prompts = {
-            "sighting": f"Create a menacing one-liner for {animatronic_name} who has just been spotted by the player. {profile['personality']}. Make it threatening but brief.",
-
-            "movement": f"Create a one-liner for {animatronic_name} as it moves closer to the player's location. {profile['personality']}. Convey movement and hunger.",
-
-            "door_lock": f"Create a dismissive or menacing one-liner for {animatronic_name} reacting to a door being locked against it. {profile['personality']}. Should sound frustrated or patient.",
-
-            "door_unlock": f"Create an excited or menacing one-liner for {animatronic_name} as a door opens for it. {profile['personality']}. Should sound triumphant.",
-
-            "power_warning": f"Create a taunting one-liner for {animatronic_name} as the player's power fails. {profile['personality']}. Reference the darkness or lack of escape.",
-
-            "waiting": f"Create an eerie one-liner for {animatronic_name} while stalking the player. {profile['personality']}. Should sound patient, like a predator waiting.",
+            "sighting": f"{animatronic_name} just spotted the player on camera. Generate a single menacing observation.",
+            "movement": f"{animatronic_name} is moving closer to the player. Generate a single threatening statement.",
+            "door_lock": f"The player locked a door against {animatronic_name}. Generate a single frustrated or patient response.",
+            "door_unlock": f"A door just opened for {animatronic_name}. Generate a single triumphant or eager response.",
+            "power_warning": f"The player's power is failing. {animatronic_name} speaks. Generate a single taunting statement.",
+            "waiting": f"{animatronic_name} is waiting in the dark. Generate a single eerie observation.",
         }
 
         prompt = user_prompts.get(event_type, user_prompts["waiting"])
@@ -93,17 +83,8 @@ class OpenRouter:
 
         try:
             completion = self.openrouter.chat.completions.create(
-                model="openai/gpt-oss-20b:free",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": SYSTEM_PROMPT
-                    },
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ]
+                model="meta-llama/llama-4-scout:free",
+                messages=[{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
             )
             return completion.choices[0].message.content.strip()
         except Exception as e:

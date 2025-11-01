@@ -199,7 +199,7 @@ while running:
 
         for anim in animatronics:
             if evalMvmtOpportunity(anim):
-                anim.moveToWaypoint()
+                anim.moveToWaypoint(doors)
 
             # Voice line when animatronic gets close to office
             distance_to_office = ((anim.x - 287)**2 + (anim.y - 544)**2)**0.5

@@ -13,10 +13,18 @@ class Animatronic:
         self.opportunity = random.randint(180, 420) # a mvmt opportunity can be ANY FRAME between 3-7 seconds at 60fps
 
 
-    def moveToWaypoint(self):
+    def moveToWaypoint(self, doors=None):
+        next_wp = self.waypoints[(self.currentWaypoint + 1) % len(self.waypoints)]
+        if doors:
+            for door in doors:
+                if door.locked:
+                    door_x = door.rect.x + door.rect.width / 2
+                    current_side = self.x < door_x
+                    next_side = next_wp[0] < door_x
+                    if current_side != next_side:
+                        return  # Can't move, door is locked
         self.currentWaypoint = (self.currentWaypoint + 1) % len(self.waypoints)
         self.x, self.y = self.waypoints[self.currentWaypoint]
-        #print(f'moved to wp {self.currentWaypoint}')
     
 
     def draw(self, surface):
