@@ -28,6 +28,8 @@ openrouter = OpenRouter()
 last_voice_frame = 0
 voice_cooldown = random.randint(600, 1200)
 battery_warning_given = False
+voice_queue = []
+currently_speaking = False
 
 # Assets
 mapImage = pygame.image.load('map.png')
@@ -138,38 +140,29 @@ def drawGame():
 def evalMvmtOpportunity(anim):
     check = anim.betweenTimeCounter()
     if check == True: # hit mvmt opportunity, now roll dice to check if we succeed
-        roll = anim.rollDie(5) #hardcode for now
+        roll = anim.rollDie(2) #lowered from 5 to slow down animatronics
         if roll:
             return True
     return False
-def callAI(voiceID): # voice id will be like eleven.bonnieVoice no parenthesis
-    if gameConditions.AiCondition.freddySpoken > 2 and voiceID == 'eleven.freddyVoice':
-        return
-    elif gameConditions.AiCondition.bonnieSpoken > 2 and voiceID == 'eleven.bonnieVoice':
-        return
-    elif gameConditions.AiCondition.chicaSpoken > 2 and voiceID == 'eleven.chicaVoice':
-        return
-    elif gameConditions.AiCondition.foxySpoken > 2 and voiceID == 'eleven.foxyVoice':
-        return
-    elif gameConditions.AiCondition.isSpeaking == True:
-        return
-    else:
-        gameConditions.AiCondition.isSpeaking = True
-        line = openrouter.generateLines()
-        eleven.generateSpeech(line, voiceID)
-        gameConditions.AiCondition.isSpeaking = False
+def playQueuedVoice():
+    global currently_speaking
+    if voice_queue and not currently_speaking:
+        currently_speaking = True
+        voice_data = voice_queue.pop(0)
+        threading.Thread(target=lambda: _playVoice(voice_data), daemon=True).start()
 
-def lowBatteryVoice():
-    line = openrouter.generateVoiceLine("Freddy", "power_warning", f"power at {int(power.currentPower)}%")
-    eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
-    
-def outOfBatteryVoice():
-    line = openrouter.generateVoiceLine("Bonnie", "power_warning", "no power left")
-    eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
-
-def closeAnimatronicVoice():
-    line = openrouter.generateVoiceLine(anim_name, "movement", f"distance {int(distance_to_office)}")
-    eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")    
+def _playVoice(voice_data):
+    global currently_speaking
+    if voice_data['type'] == 'low_battery':
+        line = openrouter.generateVoiceLine("Freddy", "power_warning", f"power at {int(power.currentPower)}%")
+        eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
+    elif voice_data['type'] == 'out_of_battery':
+        line = openrouter.generateVoiceLine("Bonnie", "power_warning", "no power left")
+        eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
+    elif voice_data['type'] == 'close_animatronic':
+        line = openrouter.generateVoiceLine(voice_data['anim'], "movement", f"distance {int(voice_data['dist'])}")
+        eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
+    currently_speaking = False    
 # Main loop
 running = True
 while running:
@@ -182,20 +175,21 @@ while running:
             handleGameInput(event)
     
     if gameState == 1: #game
+        playQueuedVoice()
+
         if gameConditions.currentFrame % 60 == 0:
             power.losePower()
 
             # Voice line for low battery
             if power.currentPower < 25 and power.currentPower > 0 and not battery_warning_given and gameConditions.currentFrame - last_voice_frame > voice_cooldown:
-
-                threading.Thread(target=lowBatteryVoice, daemon=True).start()
+                voice_queue.append({'type': 'low_battery'})
                 last_voice_frame = gameConditions.currentFrame
                 voice_cooldown = random.randint(180, 600)
                 battery_warning_given = True
 
             # Voice line for out of battery
             if power.currentPower <= 0 and gameConditions.currentFrame - last_voice_frame > voice_cooldown:
-                threading.Thread(target=outOfBatteryVoice, daemon=True).start()
+                voice_queue.append({'type': 'out_of_battery'})
                 last_voice_frame = gameConditions.currentFrame
                 voice_cooldown = random.randint(300, 900)
 
@@ -211,12 +205,12 @@ while running:
             distance_to_office = ((anim.x - 287)**2 + (anim.y - 544)**2)**0.5
             if distance_to_office < 200 and gameConditions.currentFrame - last_voice_frame > voice_cooldown:
                 anim_name = ["Freddy", "Bonnie", "Chica", "Foxy"][animatronics.index(anim)]
-                threading.Thread(target=closeAnimatronicVoice, daemon=True).start()
+                voice_queue.append({'type': 'close_animatronic', 'anim': anim_name, 'dist': distance_to_office})
                 last_voice_frame = gameConditions.currentFrame
                 voice_cooldown = random.randint(180, 600)
 
             if anim.x == 287 and anim.y == 544: #this checks if any animatronic has hit the waypoint that is in the office
-                print("LOSER")
+                gameState = 2
 
         if gameConditions.hasWon() == False:
             gameConditions.incrFrameCt()         
