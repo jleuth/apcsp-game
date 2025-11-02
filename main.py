@@ -7,7 +7,7 @@ from camera import Camera, CameraManager
 from conditions import GameConditions, Controls, AiConditions
 from power import Power
 from ai import Eleven, OpenRouter
-
+import cv2
 pygame.init()
 screen = pygame.display.set_mode((900, 600))
 pygame.display.set_caption("FNAF Horror")
@@ -32,7 +32,7 @@ voice_queue = []
 currently_speaking = False
 
 # Assets
-mapImage = pygame.image.load('map.png')
+mapImage = pygame.image.load('resources/map.png')
 mapImageCropped = mapImage.subsurface(pygame.Rect(200, 0, mapImage.get_width() - 200, mapImage.get_height())) #move to the left
 
 # Game objects 
@@ -162,7 +162,36 @@ def _playVoice(voice_data):
     elif voice_data['type'] == 'close_animatronic':
         line = openrouter.generateVoiceLine(voice_data['anim'], "movement", f"distance {int(voice_data['dist'])}")
         eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
-    currently_speaking = False    
+    currently_speaking = False
+
+def playJumpscare(anim_filepath):
+    """Play jumpscare video using cv2 with audio"""
+    try:
+        # Play audio
+        audio_filepath = anim_filepath.replace('.mp4', '.wav')
+        pygame.mixer.music.load(audio_filepath)
+        pygame.mixer.music.play()
+
+        cap = cv2.VideoCapture(anim_filepath)
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        frame_delay = int(1000 / fps) if fps > 0 else 33
+
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            frame = cv2.resize(frame, (900, 600))
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame_array = pygame.surfarray.make_surface(frame_rgb.swapaxes(0, 1))
+            screen.blit(frame_array, (0, 0))
+            pygame.display.flip()
+            pygame.time.wait(frame_delay)
+
+        cap.release()
+    except:
+        pass
+
 # Main loop
 running = True
 while running:
@@ -201,15 +230,16 @@ while running:
             if evalMvmtOpportunity(anim):
                 anim.moveToWaypoint(doors)
 
-            # Voice line when animatronic gets close to office
+            # Voice line when animatronic gets close to office (only once)
             distance_to_office = ((anim.x - 287)**2 + (anim.y - 544)**2)**0.5
-            if distance_to_office < 200 and gameConditions.currentFrame - last_voice_frame > voice_cooldown:
+            if distance_to_office < 200 and not anim.close_voice_triggered:
                 anim_name = ["Freddy", "Bonnie", "Chica", "Foxy"][animatronics.index(anim)]
                 voice_queue.append({'type': 'close_animatronic', 'anim': anim_name, 'dist': distance_to_office})
-                last_voice_frame = gameConditions.currentFrame
-                voice_cooldown = random.randint(180, 600)
+                anim.close_voice_triggered = True
 
             if anim.x == 287 and anim.y == 544: #this checks if any animatronic has hit the waypoint that is in the office
+                anim_name = ["freddy", "bonnie", "chica", "foxy"][animatronics.index(anim)]
+                playJumpscare(f'resources/{anim_name}.mp4')
                 gameState = 2
 
         if gameConditions.hasWon() == False:
@@ -218,7 +248,7 @@ while running:
             if gameConditions.currentFrame % 1800 == 0:
                 print("In-game time:", gameConditions.getFormattedTime())
         else:
-            print('clock that tea')
+            playJumpscare('resources/win.mp4')
     
     # Draw
     screen.fill((0, 0, 0))
