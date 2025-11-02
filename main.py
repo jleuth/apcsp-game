@@ -22,6 +22,7 @@ gameState = 0
 gameConditions = GameConditions()
 power = Power()
 eleven = Eleven()
+openrouter = OpenRouter()
 
 # Voice line tracking
 lastVoiceFrame = 0
