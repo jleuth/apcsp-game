@@ -29,6 +29,7 @@ voiceCooldown = random.randint(600, 1200)
 batteryWarningGiven = False
 voiceQueue = []
 currentlySpeaking = False
+closeVoiceTriggered = False
 
 # Ambience
 ambienceStarted = False
@@ -246,10 +247,10 @@ while running:
 
             # Voice line when animatronic gets close to office (only once)
             distanceToOffice = ((anim.x - 287)**2 + (anim.y - 544)**2)**0.5
-            if distanceToOffice < 200 and not anim.closeVoiceTriggered:
+            if distanceToOffice < 200 and not closeVoiceTriggered:
                 animName = ["Freddy", "Bonnie", "Chica", "Foxy"][animatronics.index(anim)]
                 voiceQueue.append({'type': 'close_animatronic', 'anim': animName, 'dist': distanceToOffice})
-                anim.closeVoiceTriggered = True
+                closeVoiceTriggered = True
 
             if anim.x == 287 and anim.y == 544: #this checks if any animatronic has hit the waypoint that is in the office
                 animName = ["freddy", "bonnie", "chica", "foxy"][animatronics.index(anim)]
