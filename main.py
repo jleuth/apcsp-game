@@ -241,6 +241,13 @@ while running:
                 anim_name = ["freddy", "bonnie", "chica", "foxy"][animatronics.index(anim)]
                 playJumpscare(f'resources/{anim_name}.mp4')
                 gameState = 2
+                screen.fill((0, 0, 0))
+                font = pygame.font.SysFont(None, 60)
+                text = font.render("Wanna play again? Restart the game!", True, (255, 255, 255))
+                text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+                screen.blit(text, text_rect)
+                pygame.display.flip()
+                pygame.time.wait(5000)
 
         if gameConditions.hasWon() == False:
             gameConditions.incrFrameCt()         
@@ -249,6 +256,13 @@ while running:
                 print("In-game time:", gameConditions.getFormattedTime())
         else:
             playJumpscare('resources/win.mp4')
+            screen.fill((0, 0, 0))
+            font = pygame.font.SysFont(None, 60)
+            text = font.render("Wanna play again? Restart the game!", True, (255, 255, 255))
+            text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+            screen.blit(text, text_rect)
+            pygame.display.flip()
+            pygame.time.wait(5000)
     
     # Draw
     screen.fill((0, 0, 0))
