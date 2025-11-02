@@ -18,60 +18,60 @@ class GameConditions:
     def getFormattedTime(self): # THIS WAS DONE BY CURSOR - I CAN'T DO MATH FOR SHIT. oh wait i get it, it just does a multiplier of the speed based on the picked game length
         # Calculate progress through the game (0.0 to 1.0)
         progress = self.currentFrame / self.gameLength
-        
+
         # Map to 6 hours (21,600 seconds total)
-        total_seconds = progress * 21600
-        
+        totalSeconds = progress * 21600
+
         # Convert to hours (12 AM + elapsed hours)
-        hours_elapsed = int(total_seconds // 3600)
-        display_hour = (12 + hours_elapsed) % 24
-        
+        hoursElapsed = int(totalSeconds // 3600)
+        displayHour = (12 + hoursElapsed) % 24
+
         # Convert to minutes
-        minutes_elapsed = int((total_seconds % 3600) // 60)
-        
+        minutesElapsed = int((totalSeconds % 3600) // 60)
+
         # Format as 12-hour time with AM
-        if display_hour == 0:
-            display_hour = 12
-        elif display_hour > 12:
-            display_hour -= 12
-        
-        return f"{display_hour}:{minutes_elapsed:02d} AM"
+        if displayHour == 0:
+            displayHour = 12
+        elif displayHour > 12:
+            displayHour -= 12
+
+        return f"{displayHour}:{minutesElapsed:02d} AM"
 
 class Controls:
     def __init__(self, cameras):
         self.buttons = []
-        self.door_buttons = []
+        self.doorButtons = []
         self.font = pygame.font.SysFont(None, 20)
 
         # Create a button for each camera
-        button_width = 370
-        button_height = 50
-        button_x = 515
-        button_y = 50
+        buttonWidth = 370
+        buttonHeight = 50
+        buttonX = 515
+        buttonY = 50
         spacing = 5
 
         for i, camera in enumerate(cameras):
-            button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+            buttonRect = pygame.Rect(buttonX, buttonY, buttonWidth, buttonHeight)
             self.buttons.append({
-                'rect': button_rect,
+                'rect': buttonRect,
                 'camera_index': i,
                 'name': camera.name
             })
-            button_y += button_height + spacing
+            buttonY += buttonHeight + spacing
 
-        door_button_width = 180
-        door_button_height = 50
-        door_button_y = button_y + 10
-        door_button_x1 = 515
-        door_button_x2 = 515 + door_button_width + 5
+        doorButtonWidth = 180
+        doorButtonHeight = 50
+        doorButtonY = buttonY + 10
+        doorButtonX1 = 515
+        doorButtonX2 = 515 + doorButtonWidth + 5
 
-        self.door_buttons.append({
-            'rect': pygame.Rect(door_button_x1, door_button_y, door_button_width, door_button_height),
+        self.doorButtons.append({
+            'rect': pygame.Rect(doorButtonX1, doorButtonY, doorButtonWidth, doorButtonHeight),
             'door_index': 0,
             'name': 'Left Door'
         })
-        self.door_buttons.append({
-            'rect': pygame.Rect(door_button_x2, door_button_y, door_button_width, door_button_height),
+        self.doorButtons.append({
+            'rect': pygame.Rect(doorButtonX2, doorButtonY, doorButtonWidth, doorButtonHeight),
             'door_index': 1,
             'name': 'Right Door'
         })
@@ -84,35 +84,27 @@ class Controls:
             pygame.draw.rect(surface, (100, 100, 150), button['rect'], 2)
             # Draw text
             text = self.font.render(button['name'], True, (255, 255, 255))
-            text_rect = text.get_rect(center=button['rect'].center)
-            surface.blit(text, text_rect)
+            textRect = text.get_rect(center=button['rect'].center)
+            surface.blit(text, textRect)
 
-        for button in self.door_buttons:
+        for button in self.doorButtons:
             # Draw button background
             pygame.draw.rect(surface, (120, 60, 60), button['rect'])
             # Draw button border
             pygame.draw.rect(surface, (180, 100, 100), button['rect'], 2)
             # Draw text
             text = self.font.render(button['name'], True, (255, 255, 255))
-            text_rect = text.get_rect(center=button['rect'].center)
-            surface.blit(text, text_rect)
+            textRect = text.get_rect(center=button['rect'].center)
+            surface.blit(text, textRect)
 
-    def getClickedCamera(self, mouse_pos):
+    def getClickedCamera(self, mousePos):
         for button in self.buttons:
-            if button['rect'].collidepoint(mouse_pos):
+            if button['rect'].collidepoint(mousePos):
                 return button['camera_index']
         return None
 
-    def getClickedDoor(self, mouse_pos):
-        for button in self.door_buttons:
-            if button['rect'].collidepoint(mouse_pos):
+    def getClickedDoor(self, mousePos):
+        for button in self.doorButtons:
+            if button['rect'].collidepoint(mousePos):
                 return button['door_index']
         return None
-
-class AiConditions:
-    def __init__(self):
-        self.isSpeaking = False
-        self.bonnieSpoken = 0
-        self.freddySpoken = 0
-        self.chicaSpoken = 0
-        self.foxySpoken = 0

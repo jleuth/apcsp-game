@@ -46,43 +46,43 @@ Generate ONLY the voice line. No explanation, no preamble. Just the line."""
 
 class Eleven: # this was sorta ripped from elevenlabs docs
     def __init__(self):
-        self.api_key = os.getenv("ELEVENLABS_API_KEY")
-        self.elevenlabs = ElevenLabs(api_key=self.api_key)
+        self.apiKey = os.getenv("ELEVENLABS_API_KEY")
+        self.elevenLabs = ElevenLabs(api_key=self.apiKey)
 
-    def generateSpeech(self, text, voice_id, model_id="eleven_v3", output_format="mp3_44100_128"):
-        audio = self.elevenlabs.text_to_speech.stream(
+    def generateSpeech(self, text, voiceId, modelId="eleven_v3", outputFormat="mp3_44100_128"):
+        audio = self.elevenLabs.text_to_speech.stream(
             text=text,
-            voice_id=voice_id,
-            model_id=model_id,
-            output_format=output_format,
+            voice_id=voiceId,
+            model_id=modelId,
+            output_format=outputFormat,
         )
         stream(audio)
 
 class OpenRouter:
     def __init__(self):
-        self.api_key = os.getenv("OPENROUTER_API_KEY")
-        self.openrouter = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=self.api_key)
+        self.apiKey = os.getenv("OPENROUTER_API_KEY")
+        self.openRouter = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=self.apiKey)
 
-    def generateVoiceLine(self, animatronic_name, event_type, context=""):
+    def generateVoiceLine(self, animatronicName, eventType, context=""):
         """Generate a single voice line based on event and animatronic personality"""
 
-        profile = ANIMATRONIC_PROFILES.get(animatronic_name, ANIMATRONIC_PROFILES["Bonnie"])
+        profile = ANIMATRONIC_PROFILES.get(animatronicName, ANIMATRONIC_PROFILES["Bonnie"])
 
-        user_prompts = {
-            "sighting": f"{animatronic_name} just spotted the player on camera. Generate a single menacing observation.",
-            "movement": f"{animatronic_name} is moving closer to the player. Generate a single threatening statement.",
-            "door_lock": f"The player locked a door against {animatronic_name}. Generate a single frustrated or patient response.",
-            "door_unlock": f"A door just opened for {animatronic_name}. Generate a single triumphant or eager response.",
-            "power_warning": f"The player's power is failing. {animatronic_name} speaks. Generate a single taunting statement.",
-            "waiting": f"{animatronic_name} is waiting in the dark. Generate a single eerie observation.",
+        userPrompts = {
+            "sighting": f"{animatronicName} just spotted the player on camera. Generate a single menacing observation.",
+            "movement": f"{animatronicName} is moving closer to the player. Generate a single threatening statement.",
+            "door_lock": f"The player locked a door against {animatronicName}. Generate a single frustrated or patient response.",
+            "door_unlock": f"A door just opened for {animatronicName}. Generate a single triumphant or eager response.",
+            "power_warning": f"The player's power is failing. {animatronicName} speaks. Generate a single taunting statement.",
+            "waiting": f"{animatronicName} is waiting in the dark. Generate a single eerie observation.",
         }
 
-        prompt = user_prompts.get(event_type, user_prompts["waiting"])
+        prompt = userPrompts.get(eventType, userPrompts["waiting"])
         if context:
             prompt += f" Context: {context}"
 
         try:
-            completion = self.openrouter.chat.completions.create(
+            completion = self.openRouter.chat.completions.create(
                 model="meta-llama/llama-4-scout:free",
                 messages=[{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": prompt}]
             )
@@ -96,16 +96,4 @@ class OpenRouter:
                 "Chica": "Where are you?",
                 "Foxy": "I'm free."
             }
-            return fallbacks.get(animatronic_name, "I see you.")
-
-    def generateLines(self): # kept for backwards compatibility
-        completion = self.openrouter.chat.completions.create(
-            model="openai/gpt-oss-20b:free",
-            messages=[
-                {
-                    "role": "user",
-                    "content": "What is the meaning of life?" #placeholder
-                }
-            ]
-        )
-        return completion.choices[0].message.content
+            return fallbacks.get(animatronicName, "I see you.")

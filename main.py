@@ -4,7 +4,7 @@ import threading
 from animatronic import Animatronic
 from door import Door
 from camera import Camera, CameraManager
-from conditions import GameConditions, Controls, AiConditions
+from conditions import GameConditions, Controls
 from power import Power
 from ai import Eleven, OpenRouter
 import cv2
@@ -22,17 +22,16 @@ gameState = 0
 gameConditions = GameConditions()
 power = Power()
 eleven = Eleven()
-openrouter = OpenRouter()
 
 # Voice line tracking
-last_voice_frame = 0
-voice_cooldown = random.randint(600, 1200)
-battery_warning_given = False
-voice_queue = []
-currently_speaking = False
+lastVoiceFrame = 0
+voiceCooldown = random.randint(600, 1200)
+batteryWarningGiven = False
+voiceQueue = []
+currentlySpeaking = False
 
 # Ambience
-ambience_started = False
+ambienceStarted = False
 
 # Assets
 mapImage = pygame.image.load('resources/map.png')
@@ -86,19 +85,19 @@ def handleMenuInput(event):
 
 def handleGameInput(event):
     if event.type == pygame.MOUSEBUTTONDOWN:
-        camera_index = controls.getClickedCamera(event.pos)
+        cameraIndex = controls.getClickedCamera(event.pos)
 
-        if camera_index is not None:
-            cameraMgr.switchCamera(camera_index)
+        if cameraIndex is not None:
+            cameraMgr.switchCamera(cameraIndex)
             if cameraMgr.activeCamera.name == 'Office':
                 power.isCamInUse = False
-                print('cam not in use')
+                #print('cam not in use')
             else:
                 power.isCamInUse = True
-                print('cam in use')
-        door_index = controls.getClickedDoor(event.pos)
-        if door_index is not None:
-            doors[door_index].toggle()
+                #print('cam in use')
+        doorIndex = controls.getClickedDoor(event.pos)
+        if doorIndex is not None:
+            doors[doorIndex].toggle()
             # update states according to door lock status
             power.isLeftDoorInUse = doors[0].locked
             power.isRightDoorInUse = doors[1].locked
@@ -109,7 +108,7 @@ def drawMenu():
     fontInstr = pygame.font.SysFont(None, 36)
     title = fontTitle.render("FNAF Clone", True, (255, 255, 255))
     instr = fontInstr.render("Press ENTER to Start", True, (255, 255, 255))
-    
+
     screen.blit(title, title.get_rect(center=(450, 200)))
     screen.blit(instr, instr.get_rect(center=(450, 300)))
 
@@ -117,25 +116,24 @@ def drawGame():
     screen.blit(mapImageCropped, (60, 0))
 
     pygame.draw.rect(screen, (100, 100, 100), (500, 0, 5, 600)) # divider
-    
+
     for door in doors:
         door.draw(screen)
 
     for anim in animatronics:
-        anim.draw(screen)
         if cameraMgr.isVisible(anim.x, anim.y):
             anim.draw(screen)
 
     camText = fontInstr.render(cameraMgr.activeCamera.name, True, (255, 255, 255))
-    screen.blit(camText, camText.get_rect(topright = (880, 10)))
+    screen.blit(camText, camText.get_rect(topright=(880, 10)))
 
     # add time display
     timeText = fontInstr.render(gameConditions.getFormattedTime(), True, (255, 255, 255))
-    screen.blit(timeText, timeText.get_rect(topleft = (520, 10)))
+    screen.blit(timeText, timeText.get_rect(topleft=(520, 10)))
 
     # add power display
     powerText = fontInstr.render(f"{power.currentPower:.1f}%", True, (255, 255, 255))
-    screen.blit(powerText, powerText.get_rect(topleft = (675, 10)))
+    screen.blit(powerText, powerText.get_rect(topleft=(675, 10)))
 
     cameraMgr.drawDarkness(screen)
     controls.draw(screen)
@@ -148,47 +146,47 @@ def evalMvmtOpportunity(anim):
             return True
     return False
 def playQueuedVoice():
-    global currently_speaking
-    if voice_queue and not currently_speaking:
-        currently_speaking = True
-        voice_data = voice_queue.pop(0)
-        threading.Thread(target=lambda: _playVoice(voice_data), daemon=True).start()
+    global currentlySpeaking
+    if voiceQueue and not currentlySpeaking:
+        currentlySpeaking = True
+        voiceData = voiceQueue.pop(0)
+        threading.Thread(target=lambda: _playVoice(voiceData), daemon=True).start()
 
-def _playVoice(voice_data):
-    global currently_speaking
-    if voice_data['type'] == 'low_battery':
+def _playVoice(voiceData):
+    global currentlySpeaking
+    if voiceData['type'] == 'low_battery':
         line = openrouter.generateVoiceLine("Freddy", "power_warning", f"power at {int(power.currentPower)}%")
         eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
-    elif voice_data['type'] == 'out_of_battery':
+    elif voiceData['type'] == 'out_of_battery':
         line = openrouter.generateVoiceLine("Bonnie", "power_warning", "no power left")
         eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
-    elif voice_data['type'] == 'close_animatronic':
-        line = openrouter.generateVoiceLine(voice_data['anim'], "movement", f"distance {int(voice_data['dist'])}")
+    elif voiceData['type'] == 'close_animatronic':
+        line = openrouter.generateVoiceLine(voiceData['anim'], "movement", f"distance {int(voiceData['dist'])}")
         eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
-    currently_speaking = False
+    currentlySpeaking = False
 
 def startAmbience():
-    global ambience_started
-    if not ambience_started:
+    global ambienceStarted
+    if not ambienceStarted:
         pygame.mixer.music.load('resources/ambience.wav')
         pygame.mixer.music.set_volume(0.7)
         pygame.mixer.music.play(-1)  # -1 loops forever
-        ambience_started = True
+        ambienceStarted = True
 
-def playJumpscare(anim_filepath):
-    global ambience_started
+def playJumpscare(animFilepath):
+    global ambienceStarted
     # Stop ambience during jumpscare
     pygame.mixer.music.stop()
-    ambience_started = False
+    ambienceStarted = False
 
     # Play audio
-    audio_filepath = anim_filepath.replace('.mp4', '.wav')
-    pygame.mixer.music.load(audio_filepath)
+    audioFilepath = animFilepath.replace('.mp4', '.wav')
+    pygame.mixer.music.load(audioFilepath)
     pygame.mixer.music.play()
 
-    cap = cv2.VideoCapture(anim_filepath)
+    cap = cv2.VideoCapture(animFilepath)
     fps = cap.get(cv2.CAP_PROP_FPS)
-    frame_delay = int(1000 / fps) if fps > 0 else 33
+    frameDelay = int(1000 / fps) if fps > 0 else 33
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -196,11 +194,11 @@ def playJumpscare(anim_filepath):
             break
 
         frame = cv2.resize(frame, (900, 600))
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        frame_array = pygame.surfarray.make_surface(frame_rgb.swapaxes(0, 1))
-        screen.blit(frame_array, (0, 0))
+        frameRgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frameArray = pygame.surfarray.make_surface(frameRgb.swapaxes(0, 1))
+        screen.blit(frameArray, (0, 0))
         pygame.display.flip()
-        pygame.time.wait(frame_delay)
+        pygame.time.wait(frameDelay)
 
     cap.release()
 
@@ -223,21 +221,21 @@ while running:
             power.losePower()
 
             # Voice line for low battery
-            if power.currentPower < 25 and power.currentPower > 0 and not battery_warning_given and gameConditions.currentFrame - last_voice_frame > voice_cooldown:
-                voice_queue.append({'type': 'low_battery'})
-                last_voice_frame = gameConditions.currentFrame
-                voice_cooldown = random.randint(180, 600)
-                battery_warning_given = True
+            if power.currentPower < 25 and power.currentPower > 0 and not batteryWarningGiven and gameConditions.currentFrame - lastVoiceFrame > voiceCooldown:
+                voiceQueue.append({'type': 'low_battery'})
+                lastVoiceFrame = gameConditions.currentFrame
+                voiceCooldown = random.randint(180, 600)
+                batteryWarningGiven = True
 
             # Voice line for out of battery
-            if power.currentPower <= 0 and gameConditions.currentFrame - last_voice_frame > voice_cooldown:
-                voice_queue.append({'type': 'out_of_battery'})
-                last_voice_frame = gameConditions.currentFrame
-                voice_cooldown = random.randint(300, 900)
+            if power.currentPower <= 0 and gameConditions.currentFrame - lastVoiceFrame > voiceCooldown:
+                voiceQueue.append({'type': 'out_of_battery'})
+                lastVoiceFrame = gameConditions.currentFrame
+                voiceCooldown = random.randint(300, 900)
 
             # Reset battery warning when power recovers
             if power.currentPower >= 50:
-                battery_warning_given = False
+                batteryWarningGiven = False
 
             if power.currentPower == 0:
                 playJumpscare('outofpower.mp4')
@@ -247,31 +245,20 @@ while running:
                 anim.moveToWaypoint(doors)
 
             # Voice line when animatronic gets close to office (only once)
-            distance_to_office = ((anim.x - 287)**2 + (anim.y - 544)**2)**0.5
-            if distance_to_office < 200 and not anim.close_voice_triggered:
-                anim_name = ["Freddy", "Bonnie", "Chica", "Foxy"][animatronics.index(anim)]
-                voice_queue.append({'type': 'close_animatronic', 'anim': anim_name, 'dist': distance_to_office})
-                anim.close_voice_triggered = True
+            distanceToOffice = ((anim.x - 287)**2 + (anim.y - 544)**2)**0.5
+            if distanceToOffice < 200 and not anim.closeVoiceTriggered:
+                animName = ["Freddy", "Bonnie", "Chica", "Foxy"][animatronics.index(anim)]
+                voiceQueue.append({'type': 'close_animatronic', 'anim': animName, 'dist': distanceToOffice})
+                anim.closeVoiceTriggered = True
 
             if anim.x == 287 and anim.y == 544: #this checks if any animatronic has hit the waypoint that is in the office
-                anim_name = ["freddy", "bonnie", "chica", "foxy"][animatronics.index(anim)]
-                playJumpscare(f'resources/{anim_name}.mp4')
+                animName = ["freddy", "bonnie", "chica", "foxy"][animatronics.index(anim)]
+                playJumpscare(f'resources/{animName}.mp4')
                 gameState = 2
-                '''
-                screen.fill((0, 0, 0))
-                font = pygame.font.SysFont(None, 60)
-                text = font.render("Wanna play again? Restart the game!", True, (255, 255, 255))
-                text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
-                screen.blit(text, text_rect)
-                pygame.display.flip()
-                pygame.time.wait(5000)
-                '''
 
         if gameConditions.hasWon() == False:
-            gameConditions.incrFrameCt()         
+            gameConditions.incrFrameCt()
         # Every 30 seconds (1800 frames at 60fps), print in-game time
-            if gameConditions.currentFrame % 1800 == 0:
-                print("In-game time:", gameConditions.getFormattedTime())
         else:
             playJumpscare('resources/win.mp4')
             gameState = 3
@@ -280,18 +267,18 @@ while running:
             screen.fill((0, 0, 0))
             font = pygame.font.SysFont(None, 60)
             text = font.render("Wanna play again? Restart the game!", True, (255, 255, 255))
-            text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
-            screen.blit(text, text_rect)
+            textRect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+            screen.blit(text, textRect)
             pygame.display.flip()
             pygame.time.wait(5000)
-    
+
     # Draw
     screen.fill((0, 0, 0))
     if gameState == 0:
         drawMenu()
     elif gameState == 1:
         drawGame()
-    
+
     pygame.display.flip()
     clock.tick(60)
 

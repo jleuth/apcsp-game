@@ -11,18 +11,18 @@ class Animatronic:
         self.speed = 1.5
         self.count = 60 #start at 60, assuming 60fps
         self.opportunity = random.randint(240, 420) # a mvmt opportunity can be ANY FRAME between 4-7 seconds at 60fps
-        self.close_voice_triggered = False
+        self.closeVoiceTriggered = False
 
 
     def moveToWaypoint(self, doors=None):
-        next_wp = self.waypoints[(self.currentWaypoint + 1) % len(self.waypoints)]
+        nextWp = self.waypoints[(self.currentWaypoint + 1) % len(self.waypoints)]
         if doors:
             for door in doors:
                 if door.locked:
-                    door_x = door.rect.x + door.rect.width / 2
-                    current_side = self.x < door_x
-                    next_side = next_wp[0] < door_x
-                    if current_side != next_side:
+                    doorX = door.rect.x + door.rect.width / 2
+                    currentSide = self.x < doorX
+                    nextSide = nextWp[0] < doorX
+                    if currentSide != nextSide:
                         return  # Can't move, door is locked
         self.currentWaypoint = (self.currentWaypoint + 1) % len(self.waypoints)
         self.x, self.y = self.waypoints[self.currentWaypoint]

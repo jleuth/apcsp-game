@@ -13,7 +13,7 @@ class Power:
         self.isCamInUse = False
 
     def losePower(self): # called once per sec
-        #calc current loss rate
+        # calc current loss rate
         self.currentPowerLossRate = self.basePowerLossRate + (self.camPowerLossRate if self.isCamInUse else 0) + (self.doorPowerLossRate if self.isLeftDoorInUse else 0) + (self.doorPowerLossRate if self.isRightDoorInUse else 0)
         self.currentPower -= self.currentPowerLossRate
 
