@@ -31,6 +31,9 @@ battery_warning_given = False
 voice_queue = []
 currently_speaking = False
 
+# Ambience
+ambience_started = False
+
 # Assets
 mapImage = pygame.image.load('resources/map.png')
 mapImageCropped = mapImage.subsurface(pygame.Rect(200, 0, mapImage.get_width() - 200, mapImage.get_height())) #move to the left
@@ -164,33 +167,42 @@ def _playVoice(voice_data):
         eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
     currently_speaking = False
 
+def startAmbience():
+    global ambience_started
+    if not ambience_started:
+        pygame.mixer.music.load('resources/ambience.wav')
+        pygame.mixer.music.set_volume(0.7)
+        pygame.mixer.music.play(-1)  # -1 loops forever
+        ambience_started = True
+
 def playJumpscare(anim_filepath):
-    """Play jumpscare video using cv2 with audio"""
-    try:
-        # Play audio
-        audio_filepath = anim_filepath.replace('.mp4', '.wav')
-        pygame.mixer.music.load(audio_filepath)
-        pygame.mixer.music.play()
+    global ambience_started
+    # Stop ambience during jumpscare
+    pygame.mixer.music.stop()
+    ambience_started = False
 
-        cap = cv2.VideoCapture(anim_filepath)
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        frame_delay = int(1000 / fps) if fps > 0 else 33
+    # Play audio
+    audio_filepath = anim_filepath.replace('.mp4', '.wav')
+    pygame.mixer.music.load(audio_filepath)
+    pygame.mixer.music.play()
 
-        while cap.isOpened():
-            ret, frame = cap.read()
-            if not ret:
-                break
+    cap = cv2.VideoCapture(anim_filepath)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frame_delay = int(1000 / fps) if fps > 0 else 33
 
-            frame = cv2.resize(frame, (900, 600))
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame_array = pygame.surfarray.make_surface(frame_rgb.swapaxes(0, 1))
-            screen.blit(frame_array, (0, 0))
-            pygame.display.flip()
-            pygame.time.wait(frame_delay)
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
 
-        cap.release()
-    except:
-        pass
+        frame = cv2.resize(frame, (900, 600))
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame_array = pygame.surfarray.make_surface(frame_rgb.swapaxes(0, 1))
+        screen.blit(frame_array, (0, 0))
+        pygame.display.flip()
+        pygame.time.wait(frame_delay)
+
+    cap.release()
 
 # Main loop
 running = True
@@ -204,6 +216,7 @@ while running:
             handleGameInput(event)
     
     if gameState == 1: #game
+        startAmbience()
         playQueuedVoice()
 
         if gameConditions.currentFrame % 60 == 0:
@@ -225,6 +238,9 @@ while running:
             # Reset battery warning when power recovers
             if power.currentPower >= 50:
                 battery_warning_given = False
+
+            if power.currentPower == 0:
+                playJumpscare('outofpower.mp4')
 
         for anim in animatronics:
             if evalMvmtOpportunity(anim):
