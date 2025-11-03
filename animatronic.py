@@ -23,9 +23,10 @@ class Animatronic:
                     currentSide = self.x < doorX
                     nextSide = nextWp[0] < doorX
                     if currentSide != nextSide:
-                        return  # Can't move, door is locked
+                        return False  # Can't move, door is locked
         self.currentWaypoint = (self.currentWaypoint + 1) % len(self.waypoints)
         self.x, self.y = self.waypoints[self.currentWaypoint]
+        return True  # Movement successful
     
 
     def draw(self, surface):

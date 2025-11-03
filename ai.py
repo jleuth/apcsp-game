@@ -61,7 +61,6 @@ class OpenRouter:
             "sighting": f"{animatronicName} just spotted the player on camera. Generate a single menacing observation.",
             "movement": f"{animatronicName} is moving closer to the player. Generate a single threatening statement.",
             "door_lock": f"The player locked a door against {animatronicName}. Generate a single frustrated or patient response.",
-            "door_unlock": f"A door just opened for {animatronicName}. Generate a single triumphant or eager response.",
             "power_warning": f"The player's power is failing. {animatronicName} speaks. Generate a single taunting statement.",
             "waiting": f"{animatronicName} is waiting in the dark. Generate a single eerie observation.",
         }

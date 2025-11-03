@@ -36,6 +36,8 @@ openrouter = OpenRouter()
 lastVoiceFrame = 0
 voiceCooldown = random.randint(600, 1200)
 batteryWarningGiven = False
+doorBlockVoiceTriggered = False
+closeVoiceTriggered = False
 voiceQueue = []
 currentlySpeaking = False
 
@@ -172,13 +174,16 @@ def _playVoice(voiceData):
     elif voiceData['type'] == 'close_animatronic':
         line = openrouter.generateVoiceLine(voiceData['anim'], "movement", f"distance {int(voiceData['dist'])}")
         eleven.generateSpeech(line, ANIMATRONICS[voiceData['anim']]["voiceId"])
+    elif voiceData['type'] == 'door_lock':
+        line = openrouter.generateVoiceLine(voiceData['anim'], "door_lock", "")
+        eleven.generateSpeech(line, ANIMATRONICS[voiceData['anim']]["voiceId"])
     currentlySpeaking = False
 
 def startAmbience():
     global ambienceStarted
     if not ambienceStarted:
         pygame.mixer.music.load('resources/ambience.wav')
-        pygame.mixer.music.set_volume(0.7)
+        pygame.mixer.music.set_volume(0.5)
         pygame.mixer.music.play(-1)  # -1 loops forever
         ambienceStarted = True
 
@@ -191,6 +196,7 @@ def playJumpscare(animFilepath):
     # Play audio
     audioFilepath = animFilepath.replace('.mp4', '.wav')
     pygame.mixer.music.load(audioFilepath)
+    pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play()
 
     cap = cv2.VideoCapture(animFilepath)
@@ -210,6 +216,7 @@ def playJumpscare(animFilepath):
         pygame.time.wait(frameDelay)
 
     cap.release()
+    pygame.mixer.music.set_volume(1) # we have to reset this globally
 
 # Main loop
 running = True
@@ -251,7 +258,12 @@ while running:
 
         for anim in animatronics:
             if evalMvmtOpportunity(anim):
-                anim.moveToWaypoint(doors)
+                movementSuccess = anim.moveToWaypoint(doors)
+                # Door block voice trigger (40% chance, one time only)
+                if not movementSuccess and not doorBlockVoiceTriggered and random.random() < 0.4:
+                    animName = ["Freddy", "Bonnie", "Chica", "Foxy"][animatronics.index(anim)]
+                    voiceQueue.append({'type': 'door_lock', 'anim': animName})
+                    doorBlockVoiceTriggered = True
 
             # Voice line when animatronic gets close to office (only once)
             distanceToOffice = ((anim.x - 287)**2 + (anim.y - 544)**2)**0.5
