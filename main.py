@@ -13,6 +13,14 @@ screen = pygame.display.set_mode((900, 600))
 pygame.display.set_caption("FNAF Horror")
 clock = pygame.time.Clock()
 
+# Animatronic configuration
+ANIMATRONICS = {
+    "Freddy": {"voiceId": "H0UBSjjChzJlSBB61i5D", "fileKey": "freddy"},
+    "Bonnie": {"voiceId": "PiE7En4dJh0s0VBPcv22", "fileKey": "bonnie"},
+    "Chica": {"voiceId": "fRpr7OEGjVNEQNSEEuzC", "fileKey": "chica"},
+    "Foxy": {"voiceId": "kcL2RMG6ULWtjU02cKAg", "fileKey": "foxy"}
+}
+
 # Game state
 #Menu = 0
 #In game = 1
@@ -30,7 +38,6 @@ voiceCooldown = random.randint(600, 1200)
 batteryWarningGiven = False
 voiceQueue = []
 currentlySpeaking = False
-closeVoiceTriggered = False
 
 # Ambience
 ambienceStarted = False
@@ -158,13 +165,13 @@ def _playVoice(voiceData):
     global currentlySpeaking
     if voiceData['type'] == 'low_battery':
         line = openrouter.generateVoiceLine("Freddy", "power_warning", f"power at {int(power.currentPower)}%")
-        eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
+        eleven.generateSpeech(line, ANIMATRONICS["Freddy"]["voiceId"])
     elif voiceData['type'] == 'out_of_battery':
         line = openrouter.generateVoiceLine("Bonnie", "power_warning", "no power left")
-        eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
+        eleven.generateSpeech(line, ANIMATRONICS["Bonnie"]["voiceId"])
     elif voiceData['type'] == 'close_animatronic':
         line = openrouter.generateVoiceLine(voiceData['anim'], "movement", f"distance {int(voiceData['dist'])}")
-        eleven.generateSpeech(line, "PiE7En4dJh0s0VBPcv22")
+        eleven.generateSpeech(line, ANIMATRONICS[voiceData['anim']]["voiceId"])
     currentlySpeaking = False
 
 def startAmbience():
