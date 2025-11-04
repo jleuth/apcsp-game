@@ -30,7 +30,6 @@ Thumbs.db
 # Pygame cache and generated assets
 *.bmp
 *.ogg
-*.wav
 *.blit
 
 .claude
