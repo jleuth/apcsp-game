@@ -51,25 +51,25 @@ mapImageCropped = mapImage.subsurface(pygame.Rect(200, 0, mapImage.get_width() -
 # Game objects 
 
 waypointsFreddy = [
-    (222, 120), (400, 121), (451, 235), (139, 142), (191, 349), (148, 513), (287, 544)
+    (202, 120), (380, 121), (431, 235), (119, 142), (171, 349), (128, 513), (287, 544)
 ]
 
 waypointsFoxy = [
-    (320, 91), (425, 76), (437, 244), (381, 379), (382, 509), (287, 544)
+    (300, 91), (405, 76), (417, 244), (361, 379), (362, 509), (287, 544)
 ]
 
 waypointsBonnie = [
-    (298, 183), (403, 142), (428, 273), (387, 385), (434, 564), (287, 544)
+    (278, 183), (383, 142), (408, 273), (367, 385), (414, 564), (287, 544)
 ]
 
 waypointsChica = [
-    (233, 204), (209, 241), (194, 383), (163, 515), (287, 544)
+    (213, 204), (189, 241), (174, 383), (143, 515), (287, 544)
 ]
 animatronics = [
-    Animatronic(-40, 100, waypointsFreddy, (139, 69, 19)),
-    Animatronic(60, 100, waypointsBonnie, (75, 0, 130)),
-    Animatronic(160, 100, waypointsChica, (255, 255, 0)),
-    Animatronic(260, 100, waypointsFoxy, (255, 0, 0)),
+    Animatronic(210, 35, waypointsFreddy, (139, 69, 19)),
+    Animatronic(250, 35, waypointsBonnie, (75, 0, 130)),
+    Animatronic(290, 35, waypointsChica, (255, 255, 0)),
+    Animatronic(325, 35, waypointsFoxy, (255, 0, 0)),
 ]
 doors = [
     Door(222, 542, 7, 33, "Left door"),
@@ -302,5 +302,5 @@ while running:
 
     pygame.display.flip()
     clock.tick(60)
-
+# for hallie :3
 pygame.quit()
