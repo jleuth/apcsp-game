@@ -57,9 +57,9 @@ python main.py
 
 made by me for apcsp because apparently i don't understand the concept of "appropriate scope for a class project"
 
-written with **claude** (the AI) who helped me turn this from a mess into a slightly more organized mess. claude also helped me refactor everything to camelCase and generally made this code way cleaner than it had any right to be. thanks claude you're the real MVP
+docs written with **claude** (the AI) who helped me turn this from a mess into a slightly more organized mess. claude also helped me refactor everything to camelCase and generally made this code way cleaner than it had any right to be. thanks claude you're the real MVP
 
-also shoutout to hallie :3
+shout out to hallie for keeping me sane :3 (written by jake not claude hehe) 
 
 ## is this overkill for apcsp?
 
